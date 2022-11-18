@@ -2,11 +2,11 @@ import subprocess
 from time import time
 import csv
 
-python_dir = r'?????\python.exe'
+python_dir = r'C:\\Users\\pc\\AppData\\Local\\Programs\\Python\\Python39\\python.exe'
 
 with open(r"problem_set.txt", 'r') as fp: res = eval(fp.read())
 ai = r'test_one_problem.py'
-timeout_sec = 60
+timeout_sec = 600
 
 score = []
 for i in range(len(res)):

@@ -8,6 +8,7 @@ class Simulator:
         self.coordinates = coordinates
         self.sticky_cubes = sticky_cubes
 
+
     def take_action(self,agent_idx, action):
 
         if agent_idx == 0 or agent_idx == 26:
@@ -153,6 +154,8 @@ class Simulator:
 
         loc_post = self.coordinates[agent_idx+1]
         loc_pre = self.coordinates[agent_idx-1]
+        print(agent_idx)
+        print(loc_i,loc_post,loc_pre)
 
         if (loc_i[0] == loc_pre[0] and loc_i[0] == loc_post[0] and loc_i[1] == loc_pre[1] and loc_i[1] == loc_post[1]):
             return True
@@ -242,25 +245,25 @@ class Interface:
     def __init__(self):
         pass
 
-    def evolve(self, state, action):
+    def evolve(self, state: Simulator,agent_idx, action):
         if type(action) is not str:
             raise ("action is not a string")
         action = action.upper()
-        if action not in self.valid_actions(state):
+        if action not in self.valid_actions(state,agent_idx):
             raise ("action is not valid")
-        state.take_action(action)
+        state.take_action(agent_idx,action)
+        
 
     def copy_state(self, state):
 
         _copy = Simulator(None, None)
         _copy.coordinates = deepcopy(state.coordinates)
-        _copy.agent_idx = deepcopy(state.agent_idx)
         _copy.sticky_cubes = state.sticky_cubes
         return _copy
 
     def perceive(self, state):
 
-        return json.dumps({'coordinates': state.coordinates, 'location': state.agent_idx, 'sticky_cubes': state.sticky_cubes})
+        return json.dumps({'coordinates': state.coordinates, 'stick_together': state.sticky_cubes})
 
     def goal_test(self, state):
 
@@ -275,17 +278,17 @@ class Interface:
                         return False
         return True
 
-    def valid_actions(self, state):
+    def valid_actions(self, state: Simulator, agent_idx):
         valid_acts = ['X90', 'X270', 'X180', 'Y90',
                       'Y270', 'Y180', 'Z90', 'Z270', 'Z180']
-        i = state.agent_idx
+        
 
-        if i == 0 or i == 26:
+        if agent_idx == 0 or agent_idx == 26:
             return valid_acts
 
-        loc_i = state.coordinates[i]
-        loc_post = state.coordinates[i+1]
-        loc_pre = state.coordinates[i-1]
+        loc_i = state.coordinates[agent_idx]
+        loc_post = state.coordinates[agent_idx+1]
+        loc_pre = state.coordinates[agent_idx-1]
 
         if (loc_i[0] == loc_pre[0] and loc_i[0] == loc_post[0] and loc_i[1] == loc_pre[1] and loc_i[1] == loc_post[1]):
             return ['Z90', 'Z270', 'Z180']
@@ -302,7 +305,3 @@ class Interface:
             return ['X90', 'X270', 'X180', 'Y90', 'Y270', 'Y180']
 
         return valid_acts
-
-    def valid_states(self, state):
-
-        return [self.copy_state(state)]
