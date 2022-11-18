@@ -62,7 +62,7 @@ class Agent:
                 child_state = interface.copy_state(game_state[0])
                 
                 # take action and change the copied node
-                interface.evolve(child_state, agent_idx, action)
+                interface.evolve(child_state, agent_idx,action)
                 
                 # add children to queue
                 queue.append([child_state, [(agent_idx,action)] + game_state[1]])
