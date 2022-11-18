@@ -4,137 +4,136 @@ import numpy as np
 
 
 class Simulator:
-    def __init__(self, map, agent_idx, sticky_cubes):
-        self.map = map
-        self.agent_idx = agent_idx
+    def __init__(self, coordinates, sticky_cubes):
+        self.coordinates = coordinates
         self.sticky_cubes = sticky_cubes
 
-    def take_action(self, action):
+    def take_action(self,agent_idx, action):
 
-        if self.agent_idx == 0 or self.agent_idx == 26:
+        if agent_idx == 0 or agent_idx == 26:
             return
 
-        if not self.is_sticky(self.agent_idx) and self.is_linear(self.agent_idx):
+        if not self.is_sticky(agent_idx) and self.is_linear(agent_idx):
             return
 
-        if not self.is_linear(self.agent_idx):
+        if not self.is_linear(agent_idx):
 
             if 'X' in action:
-                if self.map[self.agent_idx + 1][0] == self.map[self.agent_idx][0]:
+                if self.coordinates[agent_idx + 1][0] == self.coordinates[agent_idx][0]:
                     # i + 1 ..... 27 X degree rotation
-                    sub_map = self.map[:self.agent_idx+1]
-                    for i in range(self.agent_idx + 1, 27):
+                    sub_coordinates = self.coordinates[:agent_idx+1]
+                    for i in range(agent_idx + 1, 27):
 
                         new_coordinate = self.do_action(
-                            self.agent_idx, i, action)
+                            agent_idx, i, action)
 
-                        if new_coordinate not in sub_map:
+                        if new_coordinate not in sub_coordinates:
                             # update coordinate
-                            self.map[i] = new_coordinate
+                            self.coordinates[i] = new_coordinate
                         else:
                             raise ('invalid action, overlapping occurs')
 
                 else:
                     # 0 .... i-1 X degree rotation
-                    sub_map = self.map[self.agent_idx+1:]
-                    for i in range(0, self.agent_idx):
+                    sub_coordinates = self.coordinates[agent_idx+1:]
+                    for i in range(0, agent_idx):
 
                         new_coordinate = self.do_action(
-                            self.agent_idx, i, action)
+                            agent_idx, i, action)
 
-                        if new_coordinate not in sub_map:
+                        if new_coordinate not in sub_coordinates:
                             # update coordinate
-                            self.map[i] = new_coordinate
+                            self.coordinates[i] = new_coordinate
                         else:
                             raise ('invalid action, overlapping occurs')
 
             elif 'Y' in action:
-                if self.map[self.agent_idx + 1][1] == self.map[self.agent_idx][1]:
+                if self.coordinates[agent_idx + 1][1] == self.coordinates[agent_idx][1]:
                     # i + 1 ..... 27 Y degree rotation
-                    sub_map = self.map[:self.agent_idx+1]
-                    for i in range(self.agent_idx + 1, 27):
+                    sub_coordinates = self.coordinates[:agent_idx+1]
+                    for i in range(agent_idx + 1, 27):
 
                         new_coordinate = self.do_action(
-                            self.agent_idx, i, action)
+                            agent_idx, i, action)
 
-                        if new_coordinate not in sub_map:
+                        if new_coordinate not in sub_coordinates:
                             # update coordinate
-                            self.map[i] = new_coordinate
+                            self.coordinates[i] = new_coordinate
                         else:
                             raise ('invalid action, overlapping occurs')
                 else:
                     # 0 .... i-1 y degree rotation
-                    sub_map = self.map[self.agent_idx+1:]
-                    for i in range(0, self.agent_idx):
+                    sub_coordinates = self.coordinates[agent_idx+1:]
+                    for i in range(0, agent_idx):
 
                         new_coordinate = self.do_action(
-                            self.agent_idx, i, action)
+                            agent_idx, i, action)
 
-                        if new_coordinate not in sub_map:
+                        if new_coordinate not in sub_coordinates:
                             # update coordinate
-                            self.map[i] = new_coordinate
+                            self.coordinates[i] = new_coordinate
                         else:
                             raise ('invalid action, overlapping occurs')
             elif 'Z' in action:
-                if self.map[self.agent_idx + 1][2] == self.map[self.agent_idx][2]:
+                if self.coordinates[agent_idx + 1][2] == self.coordinates[agent_idx][2]:
                     # i + 1 ..... 27 z degree rotation
-                    sub_map = self.map[:self.agent_idx+1]
-                    for i in range(self.agent_idx + 1, 27):
+                    sub_coordinates = self.coordinates[:agent_idx+1]
+                    for i in range(agent_idx + 1, 27):
 
                         new_coordinate = self.do_action(
-                            self.agent_idx, i, action)
+                            agent_idx, i, action)
 
-                        if new_coordinate not in sub_map:
+                        if new_coordinate not in sub_coordinates:
                             # update coordinate
-                            self.map[i] = new_coordinate
+                            self.coordinates[i] = new_coordinate
                         else:
                             raise ('invalid action, overlapping occurs')
                 else:
                     # 0 .... i-1 z degree rotation
-                    sub_map = self.map[self.agent_idx+1:]
-                    for i in range(0, self.agent_idx):
+                    sub_coordinates = self.coordinates[agent_idx+1:]
+                    for i in range(0, agent_idx):
 
                         new_coordinate = self.do_action(
-                            self.agent_idx, i, action)
+                            agent_idx, i, action)
 
-                        if new_coordinate not in sub_map:
+                        if new_coordinate not in sub_coordinates:
                             # update coordinate
-                            self.map[i] = new_coordinate
+                            self.coordinates[i] = new_coordinate
                         else:
                             raise ('invalid action, overlapping occurs')
 
-        if self.is_sticky(self.agent_idx):
-            idx = self.agent_idx
+        if self.is_sticky(agent_idx):
+            idx = agent_idx
 
             while [idx, idx + 1] in self.sticky_cubes and self.is_linear(idx):
                 idx += 1
             if not self.is_linear(idx):
                 #  take action on idx + 1 ..... 26
-                sub_map = self.map[:self.agent_idx+1]
-                for i in range(self.agent_idx + 1, 27):
+                sub_coordinates = self.coordinates[:agent_idx+1]
+                for i in range(agent_idx + 1, 27):
 
-                    new_coordinate = self.do_action(self.agent_idx, i, action)
+                    new_coordinate = self.do_action(agent_idx, i, action)
 
-                    if new_coordinate not in sub_map:
+                    if new_coordinate not in sub_coordinates:
                         # update coordinate
-                        self.map[i] = new_coordinate
+                        self.coordinates[i] = new_coordinate
                     else:
                         raise ('invalid action, overlapping occurs')
 
-            idx = self.agent_idx
+            idx = agent_idx
 
             while [idx - 1, idx] in self.sticky_cubes and self.is_linear(idx):
                 idx -= 1
             if not self.is_linear(idx):
                 #  take action on 0 ..... idx -1
-                sub_map = self.map[self.agent_idx+1:]
-                for i in range(0, self.agent_idx):
+                sub_coordinates = self.coordinates[agent_idx+1:]
+                for i in range(0, agent_idx):
 
-                    new_coordinate = self.do_action(self.agent_idx, i, action)
+                    new_coordinate = self.do_action(agent_idx, i, action)
 
-                    if new_coordinate not in sub_map:
+                    if new_coordinate not in sub_coordinates:
                         # update coordinate
-                        self.map[i] = new_coordinate
+                        self.coordinates[i] = new_coordinate
                     else:
                         raise ('invalid action, overlapping occurs')
 
@@ -150,10 +149,10 @@ class Simulator:
         if agent_idx == 0 or agent_idx == 26:
             return True
 
-        loc_i = self.map[agent_idx]
+        loc_i = self.coordinates[agent_idx]
 
-        loc_post = self.map[agent_idx+1]
-        loc_pre = self.map[agent_idx-1]
+        loc_post = self.coordinates[agent_idx+1]
+        loc_pre = self.coordinates[agent_idx-1]
 
         if (loc_i[0] == loc_pre[0] and loc_i[0] == loc_post[0] and loc_i[1] == loc_pre[1] and loc_i[1] == loc_post[1]):
             return True
@@ -166,8 +165,8 @@ class Simulator:
 
     def do_action(self, agent_idx, cube_idx, action):
 
-        agent_coordinate = self.map[agent_idx]
-        cube_coordinate = self.map[cube_idx]
+        agent_coordinate = self.coordinates[agent_idx]
+        cube_coordinate = self.coordinates[cube_idx]
         new_coordinate = self.compute_new_coordinate(
             agent_coordinate, cube_coordinate, action)
 
@@ -254,25 +253,25 @@ class Interface:
     def copy_state(self, state):
 
         _copy = Simulator(None, None)
-        _copy.map = deepcopy(state.map)
+        _copy.coordinates = deepcopy(state.coordinates)
         _copy.agent_idx = deepcopy(state.agent_idx)
         _copy.sticky_cubes = state.sticky_cubes
         return _copy
 
     def perceive(self, state):
 
-        return json.dumps({'map': state.map, 'location': state.agent_idx, 'sticky_cubes': state.sticky_cubes})
+        return json.dumps({'coordinates': state.coordinates, 'location': state.agent_idx, 'sticky_cubes': state.sticky_cubes})
 
     def goal_test(self, state):
 
-        maxs = np.max(state.map, axis=0)
+        maxs = np.max(state.coordinates, axis=0)
         max_x, max_y, max_z = maxs[0], maxs[1], maxs[2]
 
         for i in range(0, 3):
             for j in range(0, 3):
                 for k in range(0, 3):
                     cordinate = [max_x - i, max_y - j, max_z-k]
-                    if cordinate not in state.map:
+                    if cordinate not in state.coordinates:
                         return False
         return True
 
@@ -284,9 +283,9 @@ class Interface:
         if i == 0 or i == 26:
             return valid_acts
 
-        loc_i = state.map[i]
-        loc_post = state.map[i+1]
-        loc_pre = state.map[i-1]
+        loc_i = state.coordinates[i]
+        loc_post = state.coordinates[i+1]
+        loc_pre = state.coordinates[i-1]
 
         if (loc_i[0] == loc_pre[0] and loc_i[0] == loc_post[0] and loc_i[1] == loc_pre[1] and loc_i[1] == loc_post[1]):
             return ['Z90', 'Z270', 'Z180']
