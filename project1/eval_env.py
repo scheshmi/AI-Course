@@ -4,6 +4,7 @@ import numpy as np
 from functools import lru_cache
 from scipy.spatial.transform import Rotation
 import sys
+from copy import deepcopy
 
 
 @lru_cache()
@@ -17,7 +18,7 @@ class Simulator:
         if coordinates is None: return
         self.coordinates=np.array(coordinates).astype(int)
 
-        self.stick_together = [[i[0]-1,i[1]-1] for i in stick_together]
+        self.stick_together = [[i[0],i[1]] for i in stick_together]
         self.effective_axis, self.effective_bead = self.find_effective_axis()
         self.real_joints = np.array([i for i in self.effective_bead if i is not None])
 
@@ -123,7 +124,7 @@ class Interface:
     def copy_state(self, state):
         _copy = Simulator(None)
 
-        _copy.coordinates = np.copy(state.coordinates)
+        _copy.coordinates = deepcopy(state.coordinates)
         _copy.effective_axis = state.effective_axis
         _copy.effective_bead = state.effective_bead
         _copy.real_joints = state.real_joints
@@ -157,10 +158,15 @@ class Interface:
 
     def valid_state(self, state):
         axs = state.coordinates
+        # print(f'{len(np.unique(axs, axis=0))=}')
+        # if not len(np.unique(axs, axis=0)) == len(axs):
+        #     print(state.coordinates)
         return len(np.unique(axs, axis=0)) == len(axs)
 
 
 def test_one_problemset(sample_input_json):
+    # from simulator import Simulator, Interface
+    
     game = Simulator(sample_input_json['coordinates'], sample_input_json['stick_together'])
     interface = Interface()
     from ai import Agent
@@ -169,6 +175,7 @@ def test_one_problemset(sample_input_json):
     action_count = 0
     while not (interface.goal_test(game)):
         action = agent.act(interface.perceive(game))
+
         interface.evolve(game, action)
         if not interface.valid_state(game): raise 'reached invalid state'
         action_count += 1
@@ -176,5 +183,5 @@ def test_one_problemset(sample_input_json):
 
 
 with open(r"problem_set.txt", 'r') as fp: res=eval(fp.read())
-cost=test_one_problemset(res[int(sys.argv[1])])
+cost = test_one_problemset(res[int(sys.argv[1])])
 print(cost, file=sys.stdout)

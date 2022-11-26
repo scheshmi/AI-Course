@@ -48,6 +48,7 @@ class Graphic():
             y += 15
             z += 15
             voxelarray[x, y, z] = True
+            
 
         ax = plt.figure().add_subplot(projection='3d')
         ax.voxels(voxelarray, edgecolor='k')
@@ -55,6 +56,6 @@ class Graphic():
         plt.show()
 
 
-graphic = Graphic()
+# graphic = Graphic()
 
-graphic.display(sample["coordinates"])
+# graphic.display(sample_11["coordinates"])

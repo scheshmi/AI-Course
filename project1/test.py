@@ -6,7 +6,7 @@ python_dir = r'C:\\Users\\pc\\AppData\\Local\\Programs\\Python\\Python39\\python
 
 with open(r"problem_set.txt", 'r') as fp: res = eval(fp.read())
 ai = r'test_one_problem.py'
-timeout_sec = 600
+timeout_sec = 30
 
 score = []
 for i in range(len(res)):
