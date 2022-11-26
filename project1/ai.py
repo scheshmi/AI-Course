@@ -78,7 +78,6 @@ class Agent:
         return False
 
     def BFS(self, initial_state: Simulator,valid_indexes:list):
-        valid_indexes = list(range(0,27))
         
         interface = Interface()
         queue = []
