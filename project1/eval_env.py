@@ -158,9 +158,6 @@ class Interface:
 
     def valid_state(self, state):
         axs = state.coordinates
-        # print(f'{len(np.unique(axs, axis=0))=}')
-        # if not len(np.unique(axs, axis=0)) == len(axs):
-        #     print(state.coordinates)
         return len(np.unique(axs, axis=0)) == len(axs)
 
 

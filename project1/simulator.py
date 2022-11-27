@@ -10,40 +10,43 @@ class Simulator:
 
 
     def take_action(self,agent_idx, action):
+
         tmp_coordiante = deepcopy(self.coordinates)
-        if agent_idx == 0 or agent_idx == 26:
-            return
+        # if agent_idx == 0 or agent_idx == 26:
+        #     return
 
         if not self.is_sticky(agent_idx) and self.is_linear(agent_idx):
             return
             
         if self.is_sticky(agent_idx):
+            # idx = agent_idx
+
+            # while [idx, idx + 1] in self.sticky_cubes and self.is_linear(idx):
+            #     idx += 1
+            # if not self.is_linear(idx):
+            #     #  take action on idx + 1 ..... 26
+            #     sub_coordinates = self.coordinates[:idx+1]
+            #     for i in range(idx + 1, 27):
+
+            #         new_coordinate = self.do_action(idx, i, action)
+
+            #         if new_coordinate not in sub_coordinates:
+            #             # update coordinate
+            #             self.coordinates[i] = new_coordinate
+            #         else:
+            #             self.coordinates = tmp_coordiante
+            #             return
+
             idx = agent_idx
-
-            while [idx, idx + 1] in self.sticky_cubes and self.is_linear(idx):
-                idx += 1
-            if not self.is_linear(idx):
-                #  take action on idx + 1 ..... 26
-                sub_coordinates = self.coordinates[:idx+1]
-                for i in range(idx + 1, 27):
-
-                    new_coordinate = self.do_action(idx, i, action)
-
-                    if new_coordinate not in sub_coordinates:
-                        # update coordinate
-                        self.coordinates[i] = new_coordinate
-                    else:
-                        self.coordinates = tmp_coordiante
-                        return
-
-            idx = agent_idx
-
-            while [idx - 1, idx] in self.sticky_cubes and self.is_linear(idx):
-                idx -= 1
-            if not self.is_linear(idx):
+            
+            # while [idx - 1, idx] in self.sticky_cubes and self.is_linear(idx):
+                # idx -= 1
+            if self.is_linear(idx):
                 #  take action on 0 ..... idx -1
-                sub_coordinates = self.coordinates[idx+1:]
-                for i in range(0, idx):
+                # sub_coordinates = self.coordinates[idx+1:]
+                sub_coordinates = self.coordinates[0:idx+1]
+
+                for i in range(idx+1, 27):
 
                     new_coordinate = self.do_action(idx, i, action)
 
@@ -53,8 +56,8 @@ class Simulator:
                     else:
                         self.coordinates = tmp_coordiante
                         return
-        elif not self.is_linear(agent_idx):
-
+        if not self.is_linear(agent_idx):
+            
             if 'X' in action:
                 if self.coordinates[agent_idx + 1][0] == self.coordinates[agent_idx][0]:
                     # i + 1 ..... 27 X degree rotation
@@ -73,7 +76,7 @@ class Simulator:
 
                 else:
                     # 0 .... i-1 X degree rotation
-                    sub_coordinates = self.coordinates[agent_idx+1:]
+                    sub_coordinates = self.coordinates[agent_idx:]
                     for i in range(0, agent_idx):
 
                         new_coordinate = self.do_action(
@@ -103,7 +106,7 @@ class Simulator:
                             return
                 else:
                     # 0 .... i-1 y degree rotation
-                    sub_coordinates = self.coordinates[agent_idx+1:]
+                    sub_coordinates = self.coordinates[agent_idx:]
                     for i in range(0, agent_idx):
 
                         new_coordinate = self.do_action(
@@ -132,7 +135,7 @@ class Simulator:
                             return
                 else:
                     # 0 .... i-1 z degree rotation
-                    sub_coordinates = self.coordinates[agent_idx+1:]
+                    sub_coordinates = self.coordinates[agent_idx:]
                     for i in range(0, agent_idx):
 
                         new_coordinate = self.do_action(
@@ -148,11 +151,11 @@ class Simulator:
         
 
     def is_sticky(self, agent_idx):
-        if agent_idx == 26:
-            return [agent_idx - 1, agent_idx] in self.sticky_cubes
-        if agent_idx == 0:
-            return [agent_idx, agent_idx+1] in self.sticky_cubes
-        return ([agent_idx, agent_idx+1] in self.sticky_cubes) or ([agent_idx - 1, agent_idx] in self.sticky_cubes)
+        # if agent_idx == 26:
+        #     return [agent_idx - 1, agent_idx] in self.sticky_cubes
+        # if agent_idx == 0:
+        #     return [agent_idx, agent_idx+1] in self.sticky_cubes
+        return ([agent_idx, agent_idx+1] in self.sticky_cubes) #or ([agent_idx - 1, agent_idx] in self.sticky_cubes)
 
     def is_linear(self, agent_idx):
 
@@ -225,6 +228,7 @@ class Simulator:
                     agent_coordinate[0] + agent_coordinate[1]
                 new_coordinate[0] = agent_coordinate[1] - \
                     cube_coordinate[1] + agent_coordinate[0]
+            
 
         if '270' in action:
             axis = action[0]
@@ -247,8 +251,7 @@ class Simulator:
                 new_coordinate[0] = cube_coordinate[1] - \
                     agent_coordinate[1] + agent_coordinate[0]
         return new_coordinate
-    
-   
+
 
 class Interface:
 
@@ -336,9 +339,4 @@ class Interface:
 
     def valid_state(self, state):
         axs = state.coordinates
-        # print(f'{len(np.unique(axs, axis=0))=}')
-        # if not :
         return len(np.unique(axs, axis=0)) == len(axs)
-
-    def is_modified(self,state_1:Simulator,state_2:Simulator):
-        return not (np.array(state_1.coordinates) == np.array(state_2.coordinates)).all()

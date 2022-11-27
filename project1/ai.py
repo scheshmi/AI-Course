@@ -1,5 +1,6 @@
 import json
 from simulator import *
+# from test_env import *
 import random
 import numpy as np
 from gui import Graphic
@@ -52,9 +53,14 @@ class Agent:
         for cubes in state.sticky_cubes:
             indexes.remove(cubes[1])
 
-        for idx in indexes:
-            if self.is_linear(state,idx): 
-                indexes.remove(idx)
+        # for idx in indexes:
+        #     if self.is_linear(state,idx): 
+        #         indexes.remove(idx)
+        if 0 in indexes:
+            indexes.remove(0)
+        if 26 in indexes:
+            indexes.remove(26)
+        
         return indexes
 
     def is_linear(self,state:Simulator, agent_idx):
@@ -87,23 +93,19 @@ class Agent:
         while queue:
             # pop first element from queue
             game_state = queue.pop(0)
-            # agent_idx = np.random.randint(0,27)
-            # get the list of legal actions
-            # actions_list = interface.valid_actions(game_state[0],agent_idx)
-            # indexes = list(range(0,27))
+            
             random.shuffle(valid_indexes)
             
             
             for agent_idx in valid_indexes :
-            # randomizing the order of child generation
+            
                 actions_list = interface.valid_actions(game_state[0],agent_idx)
                 random.shuffle(actions_list)
-                # action = random.sample(actions_list,1)[0]
+                
                 for action in actions_list:
                     # copy the current state
                     child_state = interface.copy_state(game_state[0])
                     
-                    # take action and change the copied node
                     interface.evolve(child_state, agent_idx,action)
                     
                     # add children to queue
