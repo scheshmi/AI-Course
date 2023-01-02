@@ -18,12 +18,9 @@ test = """{
 }"""
 
 
-
 if __name__ == "__main__":
     ai = AI()
     t = time.time()
     result = ai.solve(test)
     elapsed_time = time.time() - t
     print(f'Elapsed time: { elapsed_time:.4f}')
-
-
