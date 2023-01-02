@@ -2,7 +2,7 @@ import numpy as np
 import random
 from copy import deepcopy
 
-class SudokuSolver():
+class Sudoku():
     def __init__(self, sudoku,fixed_entries=None):
         
         self.sudoku = sudoku

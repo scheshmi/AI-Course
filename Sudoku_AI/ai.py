@@ -1,5 +1,5 @@
 import json
-from sudoku import SudokuSolver,display
+from sudoku import Sudoku,display
 import random
 from copy import deepcopy
 import math
@@ -39,7 +39,7 @@ class AI:
 
 def Simulated_Annealing_Solver(initial_sudoku,max_iter=300_000,patience_iters = 50_000):
 
-    solver = SudokuSolver(initial_sudoku)
+    solver = Sudoku(initial_sudoku)
     solver.random_filling_zeros()
     best_solver = deepcopy(solver)
     current_score = solver.compute_score()
@@ -53,7 +53,7 @@ def Simulated_Annealing_Solver(initial_sudoku,max_iter=300_000,patience_iters = 
             print(f'Iteration: {iter}, Score: {current_score}')
         
         candidate_sudoku = solver.make_candidate_sudoku()
-        solver_candidate = SudokuSolver(candidate_sudoku,solver.fixed_entries)
+        solver_candidate = Sudoku(candidate_sudoku,solver.fixed_entries)
         candidate_score = solver_candidate.compute_score()
         delta_S = float(current_score - candidate_score)
         
