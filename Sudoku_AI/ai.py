@@ -1,24 +1,81 @@
 import json
-
-
-# *** you can change everything except the name of the class, the act function and the problem_data ***
-
+from sudoku import SudokuSolver,display
+import random
+from copy import deepcopy
+import math
+import numpy as np
 
 class AI:
-    # ^^^ DO NOT change the name of the class ***
 
     def __init__(self):
         pass
 
-    # the solve function takes a json string as input
-    # and outputs the solved version as json
     def solve(self, problem):
-        # ^^^ DO NOT change the solve function above ***
-
+       
         problem_data = json.loads(problem)
-        # ^^^ DO NOT change the problem_data above ***
+        print("Initial Sudoku:")
+        init_sudoku = np.array(problem_data['sudoku'])
+        display(init_sudoku)
 
-        # TODO implement your code here
+        repeat = 10
+        init_sudoku = np.reshape(init_sudoku,(1,-1)).squeeze(axis=0)
+        for rpt in range(repeat):
+            print(f'Repetition: {rpt + 1} ')
+            sudoku = deepcopy(init_sudoku)
+            best_solver, best_score = Simulated_Annealing_Solver(sudoku)
 
-        # finished is the solved version
-        return finished
+            if best_score == -162:
+                print("\nSudoku Solved.")
+                break
+
+        print("\nFinal Sudoku:")
+        result = np.reshape(best_solver.sudoku,(9,9))
+        display(result)
+
+        final_json = json.dumps({"sudoku": result.tolist()})
+
+        return final_json
+
+
+def Simulated_Annealing_Solver(initial_sudoku,max_iter=300_000,patience_iters = 50_000):
+
+    solver = SudokuSolver(initial_sudoku)
+    solver.random_filling_zeros()
+    best_solver = deepcopy(solver)
+    current_score = solver.compute_score()
+    best_score = current_score
+    T = .5
+    count = 0
+
+    for iter in range(max_iter):
+            
+        if (iter % 1000 == 0): 
+            print(f'Iteration: {iter}, Score: {current_score}')
+        
+        candidate_sudoku = solver.make_candidate_sudoku()
+        solver_candidate = SudokuSolver(candidate_sudoku,solver.fixed_entries)
+        candidate_score = solver_candidate.compute_score()
+        delta_S = float(current_score - candidate_score)
+        
+        if (math.exp((delta_S/T)) - random.random() > 0):
+
+            solver = solver_candidate
+            current_score = candidate_score 
+    
+        if (current_score < best_score):
+            best_solver = deepcopy(solver)
+            best_score = best_solver.compute_score()
+            count = 0
+        else:
+            count+=1
+        
+        if count == patience_iters:
+            break
+    
+        if candidate_score == -162:
+            solver = solver_candidate
+            break
+
+        T = 0.99999*T
+    
+    return best_solver, best_score
